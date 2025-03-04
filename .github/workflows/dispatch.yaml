@@ -76,6 +76,6 @@ jobs:
       - name: Add individual machine
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.machine }}
+          name: ${{ matrix.machine }}.zip
           path: ${{ matrix.machine }}
 
