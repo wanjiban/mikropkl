@@ -9,6 +9,7 @@
 #   Thus, while VMs will run from the /Machines directory, any changes will be lost on next `make`. 
 
 .PHONY: prereq deps all build pkl clean 
+.SUFFIXES: 
 
 # Basic Build "From" and "To"...
 PKL_RUN_DIR := Manifests
