@@ -62,9 +62,11 @@ jobs:
       matrix:
         machine: ${{ fromJSON(needs.build.outputs.machines) }}
     steps:
+      - run: ls -l
+      - run: ls -l Machines
       - name: Produce Artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.machine }}
-          path: ./Machines/${{ matrix.machine }}
+          path: ./Machines/${{ matrix.machine }}/
 
