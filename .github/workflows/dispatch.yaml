@@ -51,8 +51,11 @@ jobs:
       - name: Store /Machines directory .utm machines built, for the "dynamic matrix of artifacts"
         id: outputdirs
         run: |
-          ls Machines | jq -R -s -c 'split("\n")[:-1]' > machinelist.json
-          echo 'outputdirs=$(cat machinelist.json)' >> "$GITHUB_OUTPUT"
+          echo 'outputdirs=' > machinelist.json
+          cat machinelist.json
+          ls Machines | jq -R -s -c 'split("\n")[:-1]' >> machinelist.json
+          cat machinelist.json
+          cat machinelist.json >> "$GITHUB_OUTPUT"
       - name: Verify RouterOS version
         run: |
           echo "Build using $ROSVER"  
