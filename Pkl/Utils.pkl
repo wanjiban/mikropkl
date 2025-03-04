@@ -57,16 +57,3 @@ function RndUUID(altsalt : Number(this <= 9999)) = "\(RndStr(8))-\(altsalt.toStr
 
 function RndUUIDWeb(altsalt : Number?) = read("https://www.uuidgenerator.net/api/version4?altsalt=\(altsalt ?? "nothing")").text
 
-/* 
-class UUID {
-    web : String = read("https://www.uuidgenerator.net/api/version4").text
-    random: String = "\(RndStr(8))-\(RndStr(4))-\(RndStr(4))-\(RndStr(4))-\(RndStr(12))"
-}
-*/
-/*
-class MacAddress {
-    prefix : String = "0E"
-    seperator: String = ":"
-    random : String = prefix + seperator + read("https://www.random.org/sequences/?min=10&max=99&col=999&format=plain&rnd=new").text.trim().take(14).replaceAll("\t",seperator)
-}
-*/
