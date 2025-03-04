@@ -73,9 +73,12 @@ jobs:
         with:
           name: Machines
       - run: ls -l
+      - id: rename
+        run: |
+          echo dashedname=${{ matrix.machine}} >> "$GITHUB_OUTPUT"
       - name: Add individual machine
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.machine }}.zip
+          name: ${{ steps.rename.outputs.dashedname }}.zip
           path: ${{ matrix.machine }}
 
