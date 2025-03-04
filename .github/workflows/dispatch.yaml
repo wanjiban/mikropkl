@@ -75,7 +75,7 @@ jobs:
       - run: ls -l
       - id: rename
         run: |
-          echo dashedname=${{ matrix.machine}} >> "$GITHUB_OUTPUT"
+          echo dashedname=${{ matrix.machine}} | tr "." "-" >> "$GITHUB_OUTPUT"
       - name: Add individual machine
         uses: actions/upload-artifact@v4
         with:
