@@ -67,18 +67,19 @@ jobs:
       matrix:
         machine: ${{ fromJSON(needs.build.outputs.machines) }}
     steps:
-      - run: ls -l
       - name: Get all machines
         uses: actions/download-artifact@v4
         with:
           name: Machines
-      - run: ls -l
-      - id: rename
+      - name: Debug show built files
+        run: ls -l
+      - name: Create ZIP for ${{ matrix.machine}}
+        id: rename
         run: |
-          echo dashedname=${{ matrix.machine}} | tr "." "-" >> "$GITHUB_OUTPUT"
-      - name: Add individual machine
+          zip -r ${{ matrix.machine}}.zip ${{ matrix.machine}} 
+      - name: Add machine as artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ steps.rename.outputs.dashedname }}.zip
-          path: ${{ matrix.machine }}
+          name: ${{ matrix.machine }}.zip
+          path: ${{ matrix.machine }}.zip
 
