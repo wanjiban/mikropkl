@@ -65,7 +65,7 @@ jobs:
     needs: build
     strategy:
       matrix:
-        machine: ${{ fromJSON(steps.outputdirs.outputs.built) }}
+        machine: ${{ fromJSON(needs.build.outputs.machines) }}
     steps:
       - run: ls -l
       - name: Get all machines
