@@ -1,0 +1,10 @@
+amends "../Templates/chr.utmzip.pkl"
+import "../Pkl/CHR.pkl"
+
+backend = "QEMU"
+architecture = "aarch64"
+
+logoSvg = new CHR.MikrotikIcon { 
+    style = "solid"
+    fill = purpleDark
+}

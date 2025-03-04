@@ -1,0 +1,16 @@
+amends "../Templates/chr.utmzip.pkl"
+import "../Pkl/CHR.pkl"
+import "../Pkl/Utils.pkl"
+
+backend = "QEMU"
+architecture = "aarch64"
+
+name = "ROSE.\(backend).\(architecture)"
+notes = "\(super.notes)  This 'ROSE' image has extra disks of size: \(additionalDisks)"
+
+logoSvg = new CHR.MikrotikIcon { 
+    style = "line"
+    fill = avacadoDark
+}
+
+additionalDisks = List(100.mb, 100.mb, 100.mb)

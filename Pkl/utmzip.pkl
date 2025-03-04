@@ -1,0 +1,87 @@
+open module utmzip.based.pkl
+import "../Pkl/Utils.pkl"
+import "../Pkl/UTM.pkl"
+
+name : String
+backend : UTM.BackendType
+architecture : UTM.SystemArchitecture
+
+memory : DataSize = UTM.defaultMemSize
+cpus : UTM.CPUCount = UTM.defaultCPUCount
+
+notes : String = UTM.defaultNotes
+logoSvg : Utils.SVG = new Utils.SVG {} 
+
+imageDownloadUrl : Utils.URLDownload
+
+additionalDisks : List<DataSize>
+
+configPlist : UTM.Config = new {
+  Backend = backend
+  System {
+    Architecture = architecture
+    MemorySize = memory.toUnit("mib").value
+    CPUCount = cpus
+  }
+  Information {
+    Name = name
+    Notes = notes
+    Icon = logoSvg.name
+  }
+  Drive {
+    new UTM.Disk {
+      Backend = backend
+      Architecture = architecture
+      ImageName = imageDownloadUrl.filename
+    }
+    for (_index in additionalDisks.mapIndexed((i,e)->Pair(i,e))) {
+      new UTM.Disk {
+        Identifier = Utils.RndUUID(_index.first)
+        Backend = backend
+        Architecture = architecture
+        ImageName = "qdisk\(_index.first).qcow2"
+      }
+    }
+  }
+  Network {
+    new UTM.Network {
+      MacAddress = Utils.RndMacAddress(name, 0, if (backend == "Apple") "a" else "e")
+      Backend = backend
+      //Hardware = if (backend == "QEMU" && architecture == "x86_64") "e1000" else null
+    } 
+  }
+  Serial {
+    new UTM.PttyTerminal {
+      when (backend == "QEMU") { Target = "Auto" }
+    }
+  }
+}
+
+meta : Any?
+
+output {
+  files {
+    ["\(name).utm/config.plist"] {
+        value = configPlist
+        renderer = new PListRenderer {}
+    }
+    ["\(name).utm/config.pkl"] {
+        value = configPlist
+        renderer = new PcfRenderer {}
+    }
+    ["\(name).utm/Data/\(logoSvg.name)"] {
+        text = logoSvg.text
+    }
+    ["\(name).utm/Data/\(imageDownloadUrl.name).url"] {
+        text = imageDownloadUrl.url
+    }
+    when (additionalDisks.length > 0) {
+      for ( _pair in additionalDisks.mapIndexed((i,e) -> Pair(i,e))) {
+        ["\(name).utm/Data/qdisk\(_pair.first).size"] { text = _pair.second.toUnit("mb").value.toString() }
+      }
+    }
+    when (backend == "Apple") {
+      ["\(name).utm/Data/efi_vars.fd.localcp"] { text = "efi_vars.fd" }
+    }
+  } 
+}

@@ -1,0 +1,168 @@
+module UTM
+import "Utils.pkl"
+
+typealias SystemArchitecture = "x86_64" | "aarch64"
+typealias BackendType = "QEMU" | "Apple"
+typealias NetworkMode = "Shared" | "Bridged"
+typealias CPUCount = UInt(this <= 64)
+
+hidden defaultCPUCount = 0
+hidden defaultMemSize = 1024
+hidden defaultNotes = "Packaged by `pkl`"
+
+// CONFIG.PLIST
+
+class Config {
+  Backend : BackendType
+  ConfigurationVersion : Int(this == 4) = 4
+  Display = new Listing {}
+  Drive = new Listing<Disk> {}
+  Information : Information
+  Input : QemuInput? = if (Backend == "QEMU") new QemuInput {} else null
+  Network : Listing<Network>
+  QEMU : QemuConfiguration? = if (Backend == "QEMU") new QemuConfiguration {
+    when (System.Architecture == "x86_64") { UEFIBoot = false }
+  } else null
+  Serial = new Listing<Serial> {
+    new SerialTerminal { when (Backend == "QEMU") { Target = "Auto" } }
+  }
+  Sharing : QemuSharing? = if (Backend == "QEMU") new QemuSharing {} else null
+  Sound : List? = if (Backend == "QEMU") List() else null
+  System : System = if (Backend == "Apple") new AppleSystem {} else new QemuSystem {}
+  Virtualization : AppleConfiguration? = if (Backend == "Apple") new AppleConfiguration {} else null
+}
+
+
+/// VM INFORMATION
+
+class Information {
+  Icon = "logo.svg"
+  IconCustom = true
+  Name : String
+  Notes = defaultNotes
+  UUID = Utils.RndUUIDWeb(0) 
+}
+
+/// DISK
+
+open class Disk {
+    Identifier : String = Utils.RndUUID(9999)
+    ImageName : String
+    Nvme : Boolean? = if (Backend == "Apple") true else null
+    ImageType : String? = if (Backend == "QEMU") "Disk" else null
+    Interface : String? = if (Backend == "QEMU") if (Architecture == "x86_64") "VirtIO" else "NVMe" else null // or "NVMe", always null on Apple
+    InterfaceVersion : Int? = if (Backend == "QEMU") 1 else null
+    ReadOnly : Boolean = false
+    hidden Backend : BackendType?
+
+    hidden Architecture : SystemArchitecture?
+}
+
+/// NETWORK
+
+open class Network {
+  Hardware : String? = if (Backend == "QEMU") "virtio-net-pci" else null
+  IsolateFromHost : Boolean? = if (Backend == "QEMU") false else null
+  MacAddress : String
+  Mode : NetworkMode = "Shared"
+  BridgeInterface: String(length > 0)?
+  PortForward : List? = if (Backend == "QEMU") List() else null
+  hidden Backend : BackendType
+}
+
+
+/// "SYSTEM" - VM sizing and other hardware control
+
+abstract class System {
+  Architecture  : SystemArchitecture
+}
+
+class AppleSystem extends System {
+  Boot { 
+    EfiVariableStoragePath = "efi_vars.fd"
+    OperatingSystem = "Linux"
+    UEFIBoot = true
+  }
+  CPUCount : CPUCount = defaultCPUCount 
+  GenericPlatform = new { 
+    // TODO: UTM accepts this empty.  Many unknowns otherwise.  Also, <data> in .plist requires custom rendering
+    // machineIdentifier = "YnBsaXN0MDDRAQJUVVVJRE8QEGnFsjSoV07ZsaVqyAx0ncsICxAAAAAAAAABAQAAAAAAAAADAAAAAAAAAAAAAAAAAAAAIw=="
+  }
+  MemorySize : Int = defaultMemSize
+}
+
+class QemuSystem extends System {
+  CPU = "default"
+  CPUCount : CPUCount = defaultCPUCount 
+  CPUFlagsAdd = List() // QEMU
+  CPUFlagsRemove = List() // QEMU
+  ForceMulticore = false // QEMU
+  JITCacheSize = 0
+  MemorySize : Int = defaultMemSize
+  Target = if (this.Architecture == "aarch64") "virt" else "q35"
+}
+
+/// SERIAL PORT
+//    TODO: additonal stty, and other serial class
+
+abstract class Serial {
+  Mode : String
+}
+
+class SerialTerminal extends Serial {
+  Mode = "Terminal"
+  Target : String?
+  Terminal {
+    BackgroundColor = "#000000"
+    CursorBlink = true
+    Font = "Menlo"
+    FontSize = 12
+    ForegroundColor = "#ffffff"
+  }
+}
+
+class PttyTerminal extends Serial {
+  Mode = "Ptty"
+  Target : "Auto"?
+}
+
+/// "CONFIGURATION" - essentially "guest" features 
+///   NOTE: EITHER: Virtualization or QEMU in .plist
+
+abstract class SystemConfiguration {}
+
+class AppleConfiguration extends SystemConfiguration {
+    Audio = false
+    Balloon = true
+    ClipboardSharing = false
+    Entropy = true
+    Keyboard = "Disabled"
+    Pointer = "Disabled"
+}
+
+class QemuConfiguration extends SystemConfiguration { 
+    AdditionalArguments = List()
+    BalloonDevice = false
+    DebugLog = false
+    Hypervisor = true
+    PS2Controller = false
+    RNGDevice = true
+    RTCLocalTime = false
+    TPMDevice = false
+    TSO = false
+    UEFIBoot = true
+}
+
+/// QEMU THINGS
+
+class QemuSharing { 
+    ClipboardSharing = false
+    DirectoryShareMode = "None"
+    DirectoryShareReadOnly = false
+}
+
+class QemuInput { 
+  MaximumUsbShare = 3
+  UsbBusSupport = "3.0"
+  UsbSharing = false
+}

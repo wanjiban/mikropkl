@@ -1,0 +1,21 @@
+extends "../Pkl/utmzip.pkl"
+import "../Pkl/CHR.pkl"
+
+name = "CHR.\(backend).\(architecture)"//"RouterOS (\(backend) \(architecture))"
+notes = "\(name) using Mikrotik CHR with UTM's \(backend) Virtualization on \(architecture).  Default username is 'admin', without password - please change when prompted.  Speed is limited to 1Mb/s, but free forever.  With trial or paid license, the speed limit can be changed.  See https://help.mikrotik.com/docs/spaces/ROS/pages/18350234/Cloud+Hosted+Router+CHR#CloudHostedRouter,CHR-CHRLicensing"
+
+// extensions
+channel : CHR.RouterOSReleaseChannel? = "stable"
+version : String? = _version.name
+hidden _version = new CHR.RouterOSVersion { 
+    name = if (channel == null) version else channel 
+    arch = outer.architecture.replaceAll("x86_64","x86").replaceAll("aarch64","arm64")
+}
+
+// utmzip
+memory = 1.gib
+cpus = 2
+imageDownloadUrl = _version.downloadUrl
+// logoSvg = new Utils.SVG {}
+
+additionalDisks : List<DataSize> = List()

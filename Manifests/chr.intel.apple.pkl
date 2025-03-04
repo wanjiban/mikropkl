@@ -1,0 +1,19 @@
+amends "../Templates/chr.utmzip.pkl"
+import "../Pkl/CHR.pkl"
+
+backend = "Apple"
+architecture = "x86_64"
+
+logoSvg = new CHR.MikrotikIcon { }
+
+// this use FAT CHR images from tikoci/fat-chr re-partitioned images.
+imageDownloadUrl { 
+  name = "chr-uefi-fat.raw"
+  url = "https://github.com/tikoci/fat-chr/releases/latest/download/chr-uefi-fat.raw"
+  filename = "chr-uefi-fat.raw"
+}
+//  Alternative source for older images:
+//    name = "chr-7.16.2.img.zip"
+//    url = "https://github.com/alecthw/mikrotik-routeros-chr-efi/releases/download/7.16.2/chr-7.16.2.img.zip"
+//    filename = "chr-efi.img"
+
