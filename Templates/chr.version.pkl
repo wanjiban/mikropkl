@@ -1,0 +1,16 @@
+// Helper script to output RouterOS version as string 
+//   from a "release channel name" like "stable" or "testing".
+
+// For use from shell: ROSVER=`pkl eval ./Templates/chr.version.pkl`
+// default is stable x86, to change: "pkl eval ... -p channel=testing -p arch=aarch64" 
+
+import "../Pkl/CHR.pkl"
+
+function getVersionStringFromChannelName(channel : String, arch: String) : String = new CHR.RouterOSVersion { name = channel; arch = arch}._name
+
+hidden channel : String = read?("prop:channel") ?? "stable"
+hidden arch : String = read?("prop:arch") ?? "x86_64"
+
+output {
+  text = getVersionStringFromChannelName(channel, arch).trim()
+}
