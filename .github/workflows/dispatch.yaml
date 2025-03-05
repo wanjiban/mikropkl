@@ -75,7 +75,11 @@ jobs:
         with:
           tag_name: ${{ github.event.inputs.version }}
           release_name: ${{ github.event.inputs.version }}
-          body: "Mikrotik RouterOS CHR, packaged for macOS UTM.  See README.md for usage."
+          body: |
+            UTM virtual machines with RouterOS CHR ${{ github.event.inputs.version }}
+            built using `pkl` ${{ github.event.inputs.pklversion }}
+
+            ### Machines 
           draft: false
           prerelease: true
   fossilize:
@@ -112,7 +116,7 @@ jobs:
           id:  ${{ needs.release.outputs.id }}
           body: |
 
-            \#\# ${{ matrix.machine }}
+            #### ${{ matrix.machine }}
             __download url__  https://github.com/${{ github.repository }}/releases/download/${{ github.event.inputs.version }}/${{ matrix.machine }}.zip
             __UTM app url__  `utm://downloadVM?url=https://github.com/${{ github.repository }}/releases/download/${{ github.event.inputs.version }}/${{ matrix.machine }}.zip`
   finish:
@@ -129,29 +133,42 @@ jobs:
           id:  ${{ needs.release.outputs.id }}
           body: |
 
-            \#\# Usage
+            ### Usage
 
-            \#\#\# Using __UTM app url__ in Terminal's `open`
+            #### Using __UTM app url__ in Terminal's `open`
             On macOS, with [UTM](https://mac.getutm.app), install
               1. Launch "Terminal" 
-              2. Type `open <utm_app_url>`, replacing __utm_app_url__ with a `utm://...` link above
+              2. Type `open <utm_app_url>`, replacing _utm_app_url_ with a `utm://...` link above
               3. UTM will open and prompt you if you want to download the machine
               4. If accepted, the machine will be stored in UTM's default document directory.
               5. Use UTM to start the image, and a new window with a terminal to machine will appear
 
-            \#\#\# Use __download url__ to control location of machine
+            #### Use _download url_ to control location of machine
             The download links contain a UTM package inside a ZIP file.  When expended,
             assuming [UTM](https://mac.getutm.app) is installed, the folder ending in `.utm`
             should just launch like any other document.  
             
-            \#\# Installation Notes
+            ### Notes
+
+            #### UTM "import" vs "alias"
             The difference between is using the `utm://` will "import" the machine,
             and use it's default store (i.e. `~/Library/Containers/UTM/Data`) along with other
             machines created from UTM's UI.  By downloading the `.utm` package "manually", 
             the user controls where the machine lives on the file system.  
             
-            When launched from Finder, UTM will create an "alias" in the UI when it first opened.
-            This is indicated by a small arrow on the machine's icon in UTM.
+            When downloaded package is launched from Finder, UTM will create an "alias" in the UI when it first opened.
+            This is indicated by a (subtle) small arrow in lower right corner on the machine's icon in UTM.
             A machine alias can be removed in UTM using "Remove" on the machine, and only the __reference__ in
-            UI is removed for an "alias" - **not** the machine nor disks.  But if `utm://` is used a "Remove",
+            UI is removed for an "alias" - __not__ the machine nor disks.  But if `utm://` is used a "Remove",
             will delete machine and disks!
+
+
+            #### "ROSE" RouterOS images
+            The ROSE images here are regular CHR images, just with 3 spare 100Mb tests for testing
+            storage related features, without having to manually add disks.  
+            After installing and starting machine, to enable ROSE storage add the "rose-storage" package,
+            ```
+            /system/package/update/check-for-update
+            /system/package/enable rose-storage
+            /system/reboot
+            ```
