@@ -59,10 +59,35 @@ jobs:
           path: ./Machines
       - name: Verify RouterOS version
         run: |
-          echo "Build using $ROSVER"  
-  fossilize:
+          echo "Build using $ROSVER"
+      - name: Push git tag to save builder's code (required for release)
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "github-actions@users.noreply.github.com"
+          git tag v${{ github.event.inputs.version }}
+          git push origin v${{ github.event.inputs.version }}
+  release:
     runs-on: ubuntu-latest
     needs: build
+    outputs:
+      upload_url: ${{ steps.create.outputs.upload_url }}
+    steps:
+      - name: Create GitHub release
+        id: create
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v$${{ github.event.inputs.version }}
+          release_name: ${{ github.event.inputs.version }}
+          body: "Mikrotik RouterOS CHR, packaged for macOS UTM.  See README.md for usage."
+          draft: false
+          prerelease: true
+  fossilize:
+    runs-on: ubuntu-latest
+    needs: 
+      - release
+      - build
     strategy:
       matrix:
         machine: ${{ fromJSON(needs.build.outputs.machines) }}
@@ -71,15 +96,17 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: Machines
-      - name: Debug show built files
-        run: ls -l
       - name: Create ZIP for ${{ matrix.machine}}
         id: rename
         run: |
           zip -r ${{ matrix.machine}}.zip ${{ matrix.machine}} 
-      - name: Add machine as artifact
-        uses: actions/upload-artifact@v4
+      - name: Upload Pkl'd image ${{ matrix.machine }} as release asset
+        id: upload-release-asset-raw
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          name: ${{ matrix.machine }}.zip
-          path: ${{ matrix.machine }}.zip
-
+          upload_url: ${{ needs.release.outputs.upload_url }}
+          asset_path: ./${{ matrix.machine }}.zip
+          asset_name: ${{ matrix.machine }}.zip
+          asset_content_type: application/octet-stream

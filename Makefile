@@ -93,3 +93,25 @@ $(SIZETARGETS): $(SIZEFILE)
 
 # converts a .localcp file into a file copy from /Files
 $(LOCALCPTARGETS): $(LOCALCPFILE)
+
+# macOS only
+
+.PHONY: utm-version utm-install utm-uninstall utm-stop utm-start 
+
+tellvm = osascript -e 'tell application "UTM" to $(2) virtual machine named "$(1)"'
+doallvms = for i in $(subst .utm,,$(notdir $(wildcard ./$(PKL_OUTPUT_DIR)/*.utm))); do osascript -e "tell application \"UTM\" to $(1) virtual machine named \"$$i\"" ; done
+
+utm-version:
+	osascript -e 'get version of application "UTM"'
+
+utm-install: $(wildcard ./$(PKL_OUTPUT_DIR)/*.utm)
+	for i in $^; do open $$i; done
+
+utm-uninstall:
+	$(call doallvms, delete)
+
+utm-stop:
+	$(call doallvms, stop)
+
+utm-start:
+	$(call doallvms, start)
