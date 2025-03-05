@@ -13,7 +13,7 @@ The newly created bundled, containing a virtualized OS, can be installed in a fe
   * `git clone` (or fork) this project and build locally - then copy or run as desired from `Machines` directory. 
 
 
-> **Links for ready-to-use RouterOS packages are in GitHub's [Releases](releases)**
+> **Links for ready-to-use RouterOS packages are in GitHub's [Releases](https://github.com/tikoci/mikropkl/releases)**
 
 UTM supports two mode of virtualization:
   * [_QEMU_](https://docs.getutm.app/settings-qemu/settings-qemu/)
@@ -53,7 +53,7 @@ The framework here is pretty agnostic, so while similar approach work for more c
 
 ### Mikrotik RouterOS (`CHR.` and `ROSE.`)
  
-> See [Releases](releases) section on GitHub for downloads.  Installation instructions are in the release notes.
+> See [Releases](https://github.com/tikoci/mikropkl/releases) section on GitHub for downloads.  Installation instructions are in the release notes.
 
 ## Build on macOS 
 
