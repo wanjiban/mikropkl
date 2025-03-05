@@ -112,6 +112,46 @@ jobs:
           id:  ${{ needs.release.outputs.id }}
           body: |
 
-            Machine ** ${{ matrix.machine }} **
-            _download url_  `https://github.com/${{ github.repository }}/releases/download/${{ github.event.inputs.version }}/${{ matrix.machine }}.zip`
-            _utm app url_  `utm://downloadVM?url=https://github.com/${{ github.repository }}/releases/download/${{ github.event.inputs.version }}/${{ matrix.machine }}.zip`
+            \#\# ${{ matrix.machine }}
+            __download url__  https://github.com/${{ github.repository }}/releases/download/${{ github.event.inputs.version }}/${{ matrix.machine }}.zip
+            __UTM app url__  `utm://downloadVM?url=https://github.com/${{ github.repository }}/releases/download/${{ github.event.inputs.version }}/${{ matrix.machine }}.zip`
+  finish:
+    runs-on: ubuntu-latest
+    needs: 
+      - release
+      - build
+      - fossilize
+    steps:
+      - name: Edit Release
+        uses: irongut/EditRelease@v1.2.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          id:  ${{ needs.release.outputs.id }}
+          body: |
+
+            \#\# Usage
+
+            \#\#\# Using __UTM app url__ in Terminal's `open`
+            On macOS, with [UTM](https://mac.getutm.app), install
+              1. Launch "Terminal" 
+              2. Type `open <utm_app_url>`, replacing __utm_app_url__ with a `utm://...` link above
+              3. UTM will open and prompt you if you want to download the machine
+              4. If accepted, the machine will be stored in UTM's default document directory.
+              5. Use UTM to start the image, and a new window with a terminal to machine will appear
+
+            \#\#\# Use __download url__ to control location of machine
+            The download links contain a UTM package inside a ZIP file.  When expended,
+            assuming [UTM](https://mac.getutm.app) is installed, the folder ending in `.utm`
+            should just launch like any other document.  
+            
+            \#\# Installation Notes
+            The difference between is using the `utm://` will "import" the machine,
+            and use it's default store (i.e. `~/Library/Containers/UTM/Data`) along with other
+            machines created from UTM's UI.  By downloading the `.utm` package "manually", 
+            the user controls where the machine lives on the file system.  
+            
+            When launched from Finder, UTM will create an "alias" in the UI when it first opened.
+            This is indicated by a small arrow on the machine's icon in UTM.
+            A machine alias can be removed in UTM using "Remove" on the machine, and only the __reference__ in
+            UI is removed for an "alias" - **not** the machine nor disks.  But if `utm://` is used a "Remove",
+            will delete machine and disks!
