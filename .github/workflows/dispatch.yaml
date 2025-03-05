@@ -109,7 +109,7 @@ jobs:
         uses: irongut/EditRelease@v1.2.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          id:  ${{ needs.release.outputs.upload_url }}
+          id:  ${{ needs.release.outputs.id }}
           body: |
 
             Machine ** ${{ matrix.machine }} **
