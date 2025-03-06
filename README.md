@@ -128,7 +128,7 @@ Any files that may need to be included in a UTM package, that are not downloadab
 
 > #### Disclaimers
 > **Not affiliated, associated, authorized, endorsed by, or in any way officially connected with MikroTik, Apple, or Ubuntu.**
-> While the code in this project is released under CC0 (see LICENSE),  CHR image contains software subject to MikroTik's Terms and Conditions, see [MIKROTIKLS MIKROTIK SOFTWARE END-USER LICENCE AGREEMENT](https://mikrotik.com/downloadterms.html).
+> While the code in this project is released to public domain (see LICENSE),  CHR image contains software subject to MikroTik's Terms and Conditions, see [MIKROTIKLS MIKROTIK SOFTWARE END-USER LICENCE AGREEMENT](https://mikrotik.com/downloadterms.html).
 > **Any trademarks and/or copyrights remain the property of their respective holders**, unless specifically noted otherwise.
 > Use of a term in this document should not be regarded as affecting the validity of any trademark or service mark. Naming of particular products or brands should not be seen as endorsements.
 > MikroTik is a trademarks of Mikrotikls SIA.
