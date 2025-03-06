@@ -40,7 +40,8 @@ jobs:
           cp ./pkl /usr/local/bin
       - name: Set RouterOS version, based on dispatch_workflow version
         run: |
-          echo "ROSVER=${{ github.event.inputs.version }}" >> $GITHUB_ENV
+          export CHR_VERSION=${{ github.event.inputs.version }} 
+          echo "ROSVER=`pkl eval ./Pkl/chr.version.pkl`" >> $GITHUB_ENV
       - name: Build using Makefile
         id: make
         run: |

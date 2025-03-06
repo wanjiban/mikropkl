@@ -11,8 +11,8 @@ function getVersionStringFromChannelName(channel : String, arch: String) : Strin
   arch = arch
 }.version
 
-hidden channel : String = read?("prop:channel") ?? "stable"
-hidden arch : String = read?("prop:arch") ?? "x86_64"
+hidden channel : String = read?("env:CHR_VERSION") ?? "stable"
+hidden arch : String = read?("env:UTM_ARCHITECTURE") ?? "x86_64"
 
 output {
   text = getVersionStringFromChannelName(channel, arch).trim()
