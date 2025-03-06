@@ -44,7 +44,7 @@ jobs:
       - name: Build using Makefile
         id: make
         run: |
-          make ${{ github.event.inputs.makefileflags }}
+          make ${{ github.event.inputs.makefileflags }} CHR_VERSION=${{ github.event.inputs.version }}  
       - name: Store /Machines directory .utm machines built, for the "dynamic matrix of artifacts"
         id: outputdirs
         run: |
