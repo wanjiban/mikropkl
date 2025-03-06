@@ -51,7 +51,7 @@ See [UTM's documentation](https://docs.getutm.app) for more details.
 
 The framework here is pretty agnostic, so while a similar approach works for more common things like Alpine or Ubuntu.  There is only one class of machine today, RouterOS.
 
-### Mikrotik RouterOS (`chr.*` and `rose.chr.*`)
+### MikroTik RouterOS (`chr.*` and `rose.chr.*`)
  
 > See [Releases](https://github.com/tikoci/mikropkl/releases) section on GitHub for downloads.  Installation instructions are in the release notes.
 
@@ -125,3 +125,14 @@ Pkl code in `Templates` is "glue" between the .plist and a more "amends friendly
 #### `./Files` - non-Pkl files & media that may be needed in output (_i.e._ "static files")
 Any files that may need to be included in a UTM package, that are not downloadable.  Currently, just `efi_vars.fd` is needed for Apple-based virtual machines.
 
+
+> #### Disclaimers
+> **Not affiliated, associated, authorized, endorsed by, or in any way officially connected with MikroTik, Apple, or Ubuntu.**
+> While the code in this project is released under CC0 (see LICENSE),  CHR image contains software subject to MikroTik's Terms and Conditions, see [MIKROTIKLS MIKROTIK SOFTWARE END-USER LICENCE AGREEMENT](https://mikrotik.com/downloadterms.html).
+> **Any trademarks and/or copyrights remain the property of their respective holders**, unless specifically noted otherwise.
+> Use of a term in this document should not be regarded as affecting the validity of any trademark or service mark. Naming of particular products or brands should not be seen as endorsements.
+> MikroTik is a trademarks of Mikrotikls SIA.
+> UNIX is a registered trademark of The Open Group.
+> Ubuntu is a registered trademark of Canonical Limited. 
+> Apple and macOS are trademarks of Apple Inc., registered in the U.S. and other countries and regions.
+> **No liability can be accepted.**  No representation or warranty of any kind, express or implied, regarding the accuracy, adequacy, validity, reliability, availability, or completeness of any information is offered.  Use the concepts, code, examples and other content at your own risk. There may be errors and inaccuracies, that may of course be damaging to your system. Although this is highly unlikely, you should proceed with caution. The author(s) do not accept any responsibility for any damage incurred.  
