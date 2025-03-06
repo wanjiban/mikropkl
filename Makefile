@@ -62,11 +62,11 @@ pkl:
 	wget -O $@ `cat $<`
 %.img: %.img.zip.url
 	wget -O $@.zip `cat $<`
-	unzip $(subst .url,,$<) -d $(dir $@)
+	unzip -o $(subst .url,,$<) -d $(dir $@)
 	rm $(subst .url,,$<)
 %.qcow2: %.qcow2.zip.url
 	wget -O $@.zip `cat $<`
-	unzip $(subst .url,,$<) -d $(dir $@)
+	unzip -o $(subst .url,,$<) -d $(dir $@)
 	rm $(subst .url,,$<)
 %.qcow2: %.size
 	qemu-img create -f qcow2 $@ `cat $<`M

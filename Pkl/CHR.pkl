@@ -70,13 +70,3 @@ hidden fixed purpleLight = "#C33366"
 hidden fixed purpleDark = "#692878"
 hidden fixed seaBlueLight = "#87D3DB"
 hidden fixed seaBlueDark = "#1F417A"
-
-
-/*
-Example URLs:
-
-https://download.mikrotik.com/routeros/7.18/routeros-7.18-arm.npk
-https://download.mikrotik.com/routeros/7.18/routeros-7.18-arm64.npk
-https://download.mikrotik.com/routeros/7.18/chr-7.18.img.zip
-https://download.mikrotik.com/routeros/7.18/chr-7.18-arm64.img.zip
-*/

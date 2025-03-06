@@ -8,8 +8,8 @@ logoSvg = new CHR.Icon { }
 
 // this use FAT CHR images from tikoci/fat-chr re-partitioned images.
 imageDownloadUrl { 
-  name = "chr-7.16.2.img.zip"
-  url = "https://github.com/tikoci/fat-chr/releases/download/\(chrVersion.version)/chr-\(chrVersion.version).img.zip"
+  name = "chr-\(outer.chrVersion.version).img.zip"
+  url = "https://github.com/tikoci/fat-chr/releases/download/\(outer.chrVersion.version)/chr-\(outer.chrVersion.version).img.zip"
   filename = "chr-efi.img"
 }
 

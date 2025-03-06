@@ -1,9 +1,9 @@
-amends "chr.utmzip.pkl"
+extends "chr.utmzip.pkl"
 import "../Pkl/CHR.pkl"
 
 backend = "QEMU"
 
-name = "ROSE.\(backend).\(architecture)"
+name = "rose.\(baseName)"
 notes = "\(super.notes)  This 'ROSE' image has extra disks of size: \(additionalDisks)"
 
 logoSvg = new CHR.Icon { 
