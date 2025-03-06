@@ -36,7 +36,7 @@ Additionally, there are two primary network modes:
 
 By default, all packages support UTM's [Headless Mode](https://docs.getutm.app/advanced/headless/). Two serial ports are added, the "built-in Terminal" and a "pseudo-tty" serial port.  These allow direct console access and serial-based automation, respectively.
 
-All of these UTM settings can be manifested by the `.pkl` scripts here. Essentially converting the friendly .pkl into the needed .plist file, with download disk images provided by the `Makefile`, and finally packaged by GitHub Action.  
+All of UTM settings can be manifested by the `.pkl` scripts here. Essentially converting the friendly .pkl into the needed .plist file, with download disk images provided by the `Makefile`, and finally packaged by GitHub Action.  
 
 ## Installing UTM on macOS
 
