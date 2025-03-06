@@ -139,18 +139,19 @@ jobs:
 
             ### Usage
 
-            #### Using __UTM app url__ in Terminal's `open`
+            #### Using `utm://`  in Terminal's `open`
             On macOS, with [UTM](https://mac.getutm.app), install
-              1. Launch "Terminal" 
-              2. Type `open <utm_app_url>`, replacing _utm_app_url_ with a `utm://...` link above
-              3. UTM will open and prompt you if you want to download the machine
-              4. If accepted, the machine will be stored in UTM's default document directory.
-              5. Use UTM to start the image, and a new window with a terminal to machine will appear
+            1. Launch "Terminal" 
+            2. Type `open '<utm_app_url>'`, replacing _utm_app_url_ with a `utm://...` link above - _make sure to 'single quote URL'_
+            3. UTM will open and prompt you if you want to download the machine
+            4. If accepted, the machine will be stored in UTM's default document directory.
+            5. Use UTM to start the image, and a new window with a terminal to machine will appear
 
-            #### Use _download url_ to control location of machine
+            #### Just download the ZIP to control location of machine
             The download links contain a UTM package inside a ZIP file.  When expanded,
             assuming [UTM](https://mac.getutm.app) is installed, the folder ending in `.utm`
             should just launch like any other document.  
+
             
             ### Notes
 
