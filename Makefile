@@ -20,7 +20,7 @@ PKL_FILES_DIR := Files
 CHR_VERSION ?= stable
 
 # options for `pkl` build
-PKL_OPTIONS := --prop chrVersion=$(CHR_VERSION)
+# PKL_OPTIONS := -e chrVersion=$(CHR_VERSION)
 
 
 all: prereq deps 

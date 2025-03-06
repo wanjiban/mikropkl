@@ -24,6 +24,6 @@ logoSvg = new CHR.Icon {
 }
 
 hidden chrVersion = new CHR.RouterOSVersion { 
-    name = read?("prop:chrVersion") ?? "stable"  
+    name = read?("env:CHR_VERSION") ?? "stable"  
     arch = outer.architecture.replaceAll("x86_64","x86").replaceAll("aarch64","arm64")
 }
