@@ -39,17 +39,17 @@ jobs:
           ./pkl --version
           cp ./pkl /usr/local/bin
       - name: Set RouterOS version, based on dispatch_workflow version
+        id: get-routeros-version
         run: |
-          export CHR_VERSION=${{ github.event.inputs.version }} 
-          echo "ROSVER=`pkl eval ./Pkl/chr.version.pkl`" >> $GITHUB_ENV
+          echo "version=`CHR_VERSION=${{ github.event.inputs.version }} pkl eval ./Pkl/chr.version.pkl`" >> $GITHUB_OUTPUT
       - name: Build using Makefile
         id: make
         run: |
-          make ${{ github.event.inputs.makefileflags }} CHR_VERSION=${{ github.event.inputs.version }}  
+          make ${{ github.event.inputs.makefileflags }} CHR_VERSION=${{ steps.get-routeros-version.outputs.version }}  
       - name: Store /Machines directory .utm machines built, for the "dynamic matrix of artifacts"
         id: outputdirs
         run: |
-          echo built=$(ls Machines | jq -R -s -c 'split("\n")[:-1]') >> "$GITHUB_OUTPUT"
+          echo built=$(ls Machines | jq -R -s -c 'split("\n")[:-1]') >> $GITHUB_OUTPUT
       - name: Produce Artifact
         uses: actions/upload-artifact@v4
         with:
