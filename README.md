@@ -7,7 +7,7 @@
 a `config.plist` and subdirectory `Data` containing virtual disk(s) or other metadata like an icon.
 This project produces a valid UTM document package bundle automatically based on [`pkl` files](https://pkl-lang.org).
 
-The newly created bundled, containing a virtualized OS, can be installed in a few ways:
+The newly created bundle contains a virtualized OS that can be installed in a few ways:
   * via app URL, `utm://downloadVM?...`, which downloads and installs a VM into UTM's default store
   * download ZIP from GitHub, then just open the "document" in Finder -  this will create an "alias" in UTM app to the location where you opened the UTM package
   * `git clone` (or fork) this project and build locally - then copy or run as desired from the `Machines` directory. 
