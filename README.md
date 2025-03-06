@@ -51,7 +51,7 @@ See [UTM's documentation](https://docs.getutm.app) for more details.
 
 The framework here is pretty agnostic, so while a similar approach works for more common things like Alpine or Ubuntu.  There is only one class of machine today, RouterOS.
 
-### Mikrotik RouterOS (`CHR.` and `ROSE.`)
+### Mikrotik RouterOS (`chr.*` and `rose.chr.*`)
  
 > See [Releases](https://github.com/tikoci/mikropkl/releases) section on GitHub for downloads.  Installation instructions are in the release notes.
 
