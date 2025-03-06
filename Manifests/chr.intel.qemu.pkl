@@ -4,7 +4,7 @@ import "../Pkl/CHR.pkl"
 backend = "QEMU"
 architecture = "x86_64"
 
-logoSvg = new CHR.MikrotikIcon { 
+logoSvg = new CHR.Icon { 
     style = "solid"
     fill = purpleLight
 }

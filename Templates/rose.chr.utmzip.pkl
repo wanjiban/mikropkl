@@ -1,0 +1,17 @@
+amends "chr.utmzip.pkl"
+import "../Pkl/CHR.pkl"
+
+backend = "QEMU"
+
+name = "ROSE.\(backend).\(architecture)"
+notes = "\(super.notes)  This 'ROSE' image has extra disks of size: \(additionalDisks)"
+
+logoSvg = new CHR.Icon { 
+    style = "line"
+    fill = roseColor
+}
+
+additionalDisks = List(100.mb, 100.mb, 100.mb)
+
+// rose specific extensions
+roseColor = CHR.black

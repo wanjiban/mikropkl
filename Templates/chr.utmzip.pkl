@@ -1,21 +1,29 @@
 extends "../Pkl/utmzip.pkl"
 import "../Pkl/CHR.pkl"
 
-name = "CHR.\(backend).\(architecture)"//"RouterOS (\(backend) \(architecture))"
-notes = "\(name) using Mikrotik CHR with UTM's \(backend) Virtualization on \(architecture).  Default username is 'admin', without password - please change when prompted.  Speed is limited to 1Mb/s, but free forever.  With trial or paid license, the speed limit can be changed.  See https://help.mikrotik.com/docs/spaces/ROS/pages/18350234/Cloud+Hosted+Router+CHR#CloudHostedRouter,CHR-CHRLicensing"
+cpus = 2
+memory = 1.gib
 
-// extensions
-channel : CHR.RouterOSReleaseChannel? = "stable"
-version : String? = _version.name
-hidden _version = new CHR.RouterOSVersion { 
-    name = if (channel == null) version else channel 
-    arch = outer.architecture.replaceAll("x86_64","x86").replaceAll("aarch64","arm64")
+imageDownloadUrl = chrVersion.downloadUrl
+additionalDisks : List<DataSize> = List()
+
+name = "CHR.\(backend).\(architecture)"
+notes = """
+\(name) 
+Mikrotik RouterOS CHR for UTM's \(backend) Virtualization on \(architecture).  
+
+Default username is 'admin', without password - please change when prompted.  
+
+Speed is limited to 1Mb/s, but free forever.  
+With trial or paid license, the speed limit can be changed.  
+See https://help.mikrotik.com/docs for more information.
+"""
+
+logoSvg = new CHR.Icon {
+    style = "solid"
 }
 
-// utmzip
-memory = 1.gib
-cpus = 2
-imageDownloadUrl = _version.downloadUrl
-// logoSvg = new Utils.SVG {}
-
-additionalDisks : List<DataSize> = List()
+hidden chrVersion = new CHR.RouterOSVersion { 
+    name = read?("prop:chrVersion") ?? "stable"  
+    arch = outer.architecture.replaceAll("x86_64","x86").replaceAll("aarch64","arm64")
+}

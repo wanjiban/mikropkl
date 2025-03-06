@@ -11,10 +11,17 @@
 .PHONY: prereq deps all build pkl clean 
 .SUFFIXES: 
 
-# Basic Build "From" and "To"...
+# basic build "from" and "to" here...
 PKL_RUN_DIR := Manifests
 PKL_OUTPUT_DIR := Machines
 PKL_FILES_DIR := Files
+
+# machine specific properties
+CHR_VERSION ?= stable
+
+# options for `pkl` build
+PKL_OPTIONS := --prop chrVersion=$(CHR_VERSION)
+
 
 all: prereq deps 
 	$(info all done)
@@ -42,7 +49,7 @@ deps: pkl
 
 pkl:
 	$(info running pkl)
-	pkl eval ./$(PKL_RUN_DIR)/*.pkl -m ./$(PKL_OUTPUT_DIR)
+	pkl eval ./$(PKL_RUN_DIR)/*.pkl $(PKL_OPTIONS) -m ./$(PKL_OUTPUT_DIR)
 
 # NOTES:  This Makefile is recursive. `pkl` is run first which produces
 #	      some placeholder files like .url, then `make` is run again

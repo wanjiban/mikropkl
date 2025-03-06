@@ -6,29 +6,22 @@ typealias RouterOSReleaseProduct = ("routeros"|"chr")
 typealias RouterOSReleaseArch = ("x86"|"arm64")
 typealias RouterOSReleaseImageType = ("img.zip"|"npk")
 
-/*
-https://download.mikrotik.com/routeros/7.18/routeros-7.18-arm.npk
-https://download.mikrotik.com/routeros/7.18/routeros-7.18-arm64.npk
-https://download.mikrotik.com/routeros/7.18/chr-7.18.img.zip
-https://download.mikrotik.com/routeros/7.18/chr-7.18-arm64.img.zip
-*/
-
 class RouterOSVersion {
     name: String|RouterOSReleaseChannel
     arch: RouterOSReleaseArch
     product: RouterOSReleaseProduct = "chr"
     downloadUrl = new Utils.URLDownload {
-        name = "\(product)-\(_name).\(_imageType)"
-        url = "https://download.mikrotik.com/routeros/\(_name)/\(product)-\(_name)\(_arch).\(_imageType)"
-        filename = "\(product)-\(_name)\(_arch).img"
+        name = "\(product)-\(version).\(_imageType)"
+        url = "https://download.mikrotik.com/routeros/\(version)/\(product)-\(version)\(_arch).\(_imageType)"
+        filename = "\(product)-\(version)\(_arch).img"
     }
     _imageType: RouterOSReleaseImageType = if (product == "chr") "img.zip" else "npk" 
     _arch: String = if (arch == "x86" && product == "chr") "" else "-\(arch)"
-    _name: String = if (name is RouterOSReleaseChannel) getNameFromChannel(name) else name
+    version: String = if (name is RouterOSReleaseChannel) getNameFromChannel(name) else name
     function getNameFromChannel(releaseChannelName : RouterOSReleaseChannel) : String = read("https://upgrade.mikrotik.com/routeros/NEWESTa7.\(releaseChannelName)").text.split(" ")[0]
 }
 
-class MikrotikIcon extends Utils.SVG {
+class Icon extends Utils.SVG {
     name: String = "mikrotik.svg"
     text: String = if (style == null) read(url).text else if (style == "line") svgLine(fill) else svgSolid(fill) 
     style: "solid"|"line"? = null
@@ -66,14 +59,24 @@ class MikrotikIcon extends Utils.SVG {
         </g>
     </svg>
     """
-    hidden fixed black = "#0E0E10"
-    hidden fixed gray = "#707372"
-    hidden fixed light = "#C8C8C7"
-    hidden fixed avacadoLight = "#A3D16E"
-    hidden fixed avacadoDark = "#155757"
-    hidden fixed purpleLight = "#C33366"
-    hidden fixed purpleDark = "#692878"
-    hidden fixed seaBlueLight = "#87D3DB"
-    hidden fixed seaBlueDark = "#1F417A"
 }
 
+hidden fixed black = "#0E0E10"
+hidden fixed gray = "#707372"
+hidden fixed light = "#C8C8C7"
+hidden fixed avocadoLight = "#A3D16E"
+hidden fixed avocadoDark = "#155757"
+hidden fixed purpleLight = "#C33366"
+hidden fixed purpleDark = "#692878"
+hidden fixed seaBlueLight = "#87D3DB"
+hidden fixed seaBlueDark = "#1F417A"
+
+
+/*
+Example URLs:
+
+https://download.mikrotik.com/routeros/7.18/routeros-7.18-arm.npk
+https://download.mikrotik.com/routeros/7.18/routeros-7.18-arm64.npk
+https://download.mikrotik.com/routeros/7.18/chr-7.18.img.zip
+https://download.mikrotik.com/routeros/7.18/chr-7.18-arm64.img.zip
+*/
