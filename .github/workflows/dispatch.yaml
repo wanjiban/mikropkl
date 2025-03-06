@@ -25,6 +25,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       machines: ${{ steps.outputdirs.outputs.built }}
+      chr-version: ${{ steps.get-routeros-version.outputs.version }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -59,8 +60,8 @@ jobs:
         run: |
           git config user.name "GitHub Actions"
           git config user.email "github-actions@users.noreply.github.com"
-          git tag ${{ github.event.inputs.version }}
-          git push origin ${{ github.event.inputs.version }}
+          git tag ${{ steps.get-routeros-version.outputs.version }} 
+          git push origin ${{ steps.get-routeros-version.outputs.version }}
   release:
     runs-on: ubuntu-latest
     needs: build
@@ -74,10 +75,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.event.inputs.version }}
-          release_name: ${{ github.event.inputs.version }}
+          tag_name: ${{ needs.build.outputs.chr-version }} 
+          release_name: ${{ needs.build.outputs.chr-version }} 
           body: |
-            UTM virtual machines with RouterOS CHR ${{ github.event.inputs.version }}
+            UTM virtual machines with RouterOS CHR ${{ needs.build.outputs.chr-version }} 
             built using `pkl` ${{ github.event.inputs.pklversion }}
 
             ### Machines 
@@ -118,8 +119,10 @@ jobs:
           body: |
 
             #### ${{ matrix.machine }}
-            _download url_  https://github.com/${{ github.repository }}/releases/download/${{ github.event.inputs.version }}/${{ matrix.machine }}.zip
-            _UTM app url_  `utm://downloadVM?url=https://github.com/${{ github.repository }}/releases/download/${{ github.event.inputs.version }}/${{ matrix.machine }}.zip`
+            https://github.com/${{ github.repository }}/releases/download/${{ needs.build.outputs.chr-version }}/${{ matrix.machine }}.zip
+            ```
+            utm://downloadVM?url=https://github.com/${{ github.repository }}/releases/download/${{ needs.build.outputs.chr-version }}/${{ matrix.machine }}.zip
+            ```
   finish:
     runs-on: ubuntu-latest
     needs: 
