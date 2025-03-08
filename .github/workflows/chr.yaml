@@ -1,5 +1,5 @@
 
-name: Dispatch Build
+name: CHR Packages
 permissions: write-all
 
 on:
@@ -19,6 +19,16 @@ on:
         default: "-d"
         type: string
         description: 'Makefile options'
+        required: true
+      tagprefix:
+        default: "chr-"
+        type: string
+        description: 'Prefix to use in git tag'
+        required: true
+      releaseprefix:
+        default: "RouterOS CHR"
+        type: string
+        description: 'Prefix to use in release name'
         required: true
 jobs:
   build:
@@ -60,8 +70,8 @@ jobs:
         run: |
           git config user.name "GitHub Actions"
           git config user.email "github-actions@users.noreply.github.com"
-          git tag ${{ steps.get-routeros-version.outputs.version }} 
-          git push origin ${{ steps.get-routeros-version.outputs.version }}
+          git tag ${{ github.event.inputs.tagprefix }}${{ steps.get-routeros-version.outputs.version }} 
+          git push origin ${{ github.event.inputs.tagprefix }}${{ steps.get-routeros-version.outputs.version }}
   release:
     runs-on: ubuntu-latest
     needs: build
@@ -75,8 +85,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ needs.build.outputs.chr-version }} 
-          release_name: ${{ needs.build.outputs.chr-version }} 
+          tag_name: ${{ github.event.inputs.tagprefix }}${{ needs.build.outputs.chr-version }} 
+          release_name: ${{ github.event.inputs.releaseprefix }} ${{ needs.build.outputs.chr-version }} 
           body: |
             UTM virtual machines with RouterOS CHR ${{ needs.build.outputs.chr-version }} 
             built using `pkl` ${{ github.event.inputs.pklversion }}
@@ -121,9 +131,9 @@ jobs:
           body: |
 
             #### ${{ matrix.machine }}
-            https://github.com/${{ github.repository }}/releases/download/${{ needs.build.outputs.chr-version }}/${{ matrix.machine }}.zip
+            https://github.com/${{ github.repository }}/releases/download/${{ github.event.inputs.tagprefix }}${{ needs.build.outputs.chr-version }}/${{ matrix.machine }}.zip
             ```
-            utm://downloadVM?url=https://github.com/${{ github.repository }}/releases/download/${{ needs.build.outputs.chr-version }}/${{ matrix.machine }}.zip
+            utm://downloadVM?url=https://github.com/${{ github.repository }}/releases/download/${{ github.event.inputs.tagprefix }}${{ needs.build.outputs.chr-version }}/${{ matrix.machine }}.zip
             ```
   finish:
     runs-on: ubuntu-latest
