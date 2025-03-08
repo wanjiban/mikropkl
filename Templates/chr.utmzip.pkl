@@ -30,3 +30,12 @@ chrVersion : CHR.RouterOSVersion = new CHR.RouterOSVersion {
     name = read?("env:CHR_VERSION") ?? "stable"  
     arch = outer.architecture.replaceAll("x86_64","x86").replaceAll("aarch64","arm64")
 }
+
+// override the actual .plist, to set CPU to "cortex-a710" for CHR
+configPlist {
+    System {
+        when (outer.architecture == "aarch64") {
+            CPU = "cortex-a710"
+        }
+    }
+}

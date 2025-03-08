@@ -32,11 +32,7 @@ class Config {
   }
   Sharing : QemuSharing? = if (Backend == "QEMU") new QemuSharing {} else null
   Sound : List? = if (Backend == "QEMU") List() else null
-  System : System = if (Backend == "Apple") new AppleSystem {} else new QemuSystem {
-    when (Architecture == "aarch64") {
-      CPU = "cortex-a710"
-    }
-  }
+  System : System = if (Backend == "Apple") new AppleSystem {} else new QemuSystem {}
   Virtualization : AppleConfiguration? = if (Backend == "Apple") new AppleConfiguration {} else null
 }
 
