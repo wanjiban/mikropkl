@@ -26,7 +26,7 @@ on:
         description: 'Prefix to use in git tag'
         required: true
       releaseprefix:
-        default: "RouterOS CHR"
+        default: "CHR"
         type: string
         description: 'Prefix to use in release name'
         required: true
