@@ -92,6 +92,8 @@ jobs:
     strategy:
       matrix:
         machine: ${{ fromJSON(needs.build.outputs.machines) }}
+      fail-fast: true
+      max-parallel: 1
     steps:
       - name: Get all machines
         uses: actions/download-artifact@v4

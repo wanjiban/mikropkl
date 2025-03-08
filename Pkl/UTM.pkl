@@ -21,7 +21,11 @@ class Config {
   Input : QemuInput? = if (Backend == "QEMU") new QemuInput {} else null
   Network : Listing<Network>
   QEMU : QemuConfiguration? = if (Backend == "QEMU") new QemuConfiguration {
-    when (System.Architecture == "x86_64") { UEFIBoot = false }
+    when (System.Architecture == "x86_64") { 
+      UEFIBoot = false
+      Hypervisor = true
+      RNGDevice = true 
+    }
   } else null
   Serial = new Listing<Serial> {
     new SerialTerminal { when (Backend == "QEMU") { Target = "Auto" } }
@@ -144,9 +148,9 @@ class QemuConfiguration extends SystemConfiguration {
     AdditionalArguments = List()
     BalloonDevice = false
     DebugLog = false
-    Hypervisor = true
+    Hypervisor = false
     PS2Controller = false
-    RNGDevice = true
+    RNGDevice = false
     RTCLocalTime = false
     TPMDevice = false
     TSO = false
