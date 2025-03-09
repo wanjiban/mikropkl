@@ -15,7 +15,7 @@ additionalDisks : List<DataSize> = List()
 notes = 
   """
   \(name) 
-  Mikrotik RouterOS CHR for UTM's \(backend) Virtualization on \(architecture).  
+  MikroTik RouterOS CHR for UTM's \(backend) Virtualization on \(architecture).  
 
   Default username is 'admin', without password - please change when prompted.  
 

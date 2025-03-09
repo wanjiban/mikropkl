@@ -1,18 +1,20 @@
 module CHR
-import "Utils.pkl"
 
-// TODO: more String's could have contraints (.length, RegEx), only more "enum-like" strings do
+import "./URL.pkl"
+import "./SVG.pkl"
+
+// TODO: more String's could have constraints (.length, RegEx), only more "enum-like" strings do
 typealias RouterOSReleaseChannel =  ("stable"|"long-term"|"testing"|"development"|"upgrade")
 typealias RouterOSReleaseProduct = ("routeros"|"chr")
 typealias RouterOSReleaseArch = ("x86"|"arm64")
 typealias RouterOSReleaseImageType = ("img.zip"|"npk")
 
-// TODO: could just be function...
+// TODO: could just be function
 class RouterOSVersion {
   name: String|RouterOSReleaseChannel
   arch: RouterOSReleaseArch
   product: RouterOSReleaseProduct = "chr"
-  downloadUrl : Utils.URLDownload = new {
+  downloadUrl : URL.Download = new {
       name = "\(product)-\(version).\(_imageType)"
       url = "https://download.mikrotik.com/routeros/\(version)/\(product)-\(version)\(_arch).\(_imageType)"
       filename = "\(product)-\(version)\(_arch).img"
@@ -23,12 +25,10 @@ class RouterOSVersion {
   
   function getNameFromChannel(releaseChannelName : RouterOSReleaseChannel) : String = 
     read("https://upgrade.mikrotik.com/routeros/NEWESTa7.\(releaseChannelName)")
-      .text
-      .split(" ")
-      [0]
+      .text.split(" ")[0]
 }
 
-class Icon extends Utils.SVG {
+class Icon extends SVG.Icon {
   name = "mikrotik.svg"
   text: String = 
     if (style == null)
@@ -38,11 +38,11 @@ class Icon extends Utils.SVG {
     else 
       svgSolid(fill) 
 
+  url = "https://\(source)/\(group)/\(tag).svg"
   source = "mikrotik.com" 
   group = "logo/library/logo/SVG"
   tag = "MT_Symbol_Line_Black"
-  // calculated in parwnt, but same as: 
-  // url = "https://mikrotik.com/logo/library/logo/SVG/MT_Symbol_Line_Black.svg" 
+
 
   style: "solid"|"line"? = null
   fill: String? = "#00ff00"
@@ -78,7 +78,7 @@ class Icon extends Utils.SVG {
       """
 }
 
-// "almost consts" for colors from mikrotik.com/logo specs
+// "almost consts" for a few colors from mikrotik.com/logo specs
 hidden fixed black = "#0E0E10"
 hidden fixed gray = "#707372"
 hidden fixed light = "#C8C8C7"

@@ -1,0 +1,24 @@
+
+module Randomish
+
+function macAddress(seed: String, index: UInt16, prefix : "2"|"6"|"a"|"e") = 
+  let (s = "\(seed)\(index)\(prefix)".sha1.take(10)) 
+    "0\(prefix):\(s[0])\(s[1]):\(s[2])\(s[3]):\(s[4])\(s[5]):\(s[6])\(s[7]):\(s[8])\(s[9])"
+
+function webRandom(length : UInt(this < 512)) = 
+  read("https://www.random.org/sequences/?min=10&max=99&col=1000&format=plain&rnd=new")
+    .text
+    .trim()
+    .take(
+      (length + (length / 2 - 1))
+      .toInt()
+    )
+    .replaceAll("\t","")
+
+function hashUUID(altsalt : Number(this <= 9999)) = 
+  "\(webRandom(8))-\(altsalt.toString().padStart(4,"0"))-\(webRandom(4))-\(webRandom(4))-\(webRandom(12))"
+
+function webUUID(altsalt : Number?) = 
+  read("https://www.uuidgenerator.net/api/version4?altsalt=\(altsalt ?? "nothing")")
+    .text
+

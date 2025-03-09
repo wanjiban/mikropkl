@@ -1,19 +1,11 @@
-module Utils
+open module SVG
 
-// TODO: breakup into seperate files like SVG, Random
-
-open class URLDownload {
-  name: String
-  url: String
-  filename : String = name
-}
-
-open class SVG {
+abstract class Icon {
   name: String
   text: String
 }
 
-class PklSVG extends SVG {
+class PklIcon extends Icon {
   name = "pkl-custom.svg"
   primaryColor = "#6b9543"
   secondaryColor = "#c8d987"
@@ -46,35 +38,11 @@ class PklSVG extends SVG {
     """
 }
 
-class IconifySVG extends SVG {
-  url = "https://\(source)/\(group)/\(tag).svg"
+class Iconify extends Icon {
+  name = tag
   text = read(url).text
+  url = "https://\(source)/\(group)/\(tag).svg"
   source = "api.iconify.design"
   group = "file-icons"
   tag = "pickle"
 }
-
-
-// HELPERS
-
-function RndMacAddress(seed: String, index: UInt16, prefix : "2"|"6"|"a"|"e") = 
-  let (s = "\(seed)\(index)\(prefix)".sha1.take(10)) 
-    "0\(prefix):\(s[0])\(s[1]):\(s[2])\(s[3]):\(s[4])\(s[5]):\(s[6])\(s[7]):\(s[8])\(s[9])"
-
-function RndStr(length : UInt(this < 512)) = 
-  read("https://www.random.org/sequences/?min=10&max=99&col=1000&format=plain&rnd=new")
-    .text
-    .trim
-    .take(
-      (length + (length / 2 - 1))
-      .toInt()
-    )
-    .replaceAll("\t","")
-
-function RndUUID(altsalt : Number(this <= 9999)) = 
-  "\(RndStr(8))-\(altsalt.toString().padStart(4,"0"))-\(RndStr(4))-\(RndStr(4))-\(RndStr(12))"
-
-function RndUUIDWeb(altsalt : Number?) = 
-  read("https://www.uuidgenerator.net/api/version4?altsalt=\(altsalt ?? "nothing")")
-    .text
-

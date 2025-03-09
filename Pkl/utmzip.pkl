@@ -1,20 +1,26 @@
 open module utmzip
-import "../Pkl/Utils.pkl"
-import "../Pkl/UTM.pkl"
+import "Randomish.pkl"
+import "UTM.pkl"
+import "URL.pkl"
+import "SVG.pkl"
 
 name : String
+
 backend : UTM.BackendType
+
 architecture : UTM.SystemArchitecture
 
 memory : DataSize = UTM.defaultMemSize
+
 cpus : UTM.CPUCount = UTM.defaultCPUCount
 
-notes : String = UTM.defaultNotes
-logoSvg : Utils.SVG = new {} 
-
-imageDownloadUrl : Utils.URLDownload
+imageDownloadUrl : URL.Download
 
 additionalDisks : List<DataSize>
+
+notes : String = UTM.defaultNotes
+
+logoSvg : SVG.Icon = new SVG.Pkl {} 
 
 configPlist : UTM.Config = new {
 
@@ -40,7 +46,7 @@ configPlist : UTM.Config = new {
     }
     for (_index in additionalDisks.mapIndexed((i,e)->Pair(i,e))) {
       new {
-        Identifier = Utils.RndUUID(_index.first)
+        Identifier = Randomish.hashUUID(_index.first)
         Backend = backend
         Architecture = architecture
         ImageName = "qdisk\(_index.first).qcow2"
@@ -50,9 +56,9 @@ configPlist : UTM.Config = new {
   
   Network {
     new {
-      MacAddress = Utils.RndMacAddress(name, 0, if (backend == "Apple") "a" else "e")
+      MacAddress = Randomish.macAddress(name, 0, if (backend == "Apple") "a" else "e")
       Backend = backend
-      /// example to control QEMU network card: 
+      // example to control QEMU network card: 
       // Hardware = if (backend == "QEMU" && architecture == "x86_64") "e1000" else null
     } 
   }

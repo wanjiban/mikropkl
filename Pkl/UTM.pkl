@@ -1,5 +1,5 @@
 module UTM
-import "Utils.pkl"
+import "Randomish.pkl"
 
 typealias SystemArchitecture = "x86_64" | "aarch64"
 typealias BackendType = "QEMU" | "Apple"
@@ -61,13 +61,13 @@ class Information {
   IconCustom = true
   Name : String
   Notes = defaultNotes
-  UUID = Utils.RndUUIDWeb(0) 
+  UUID = Randomish.webUUID(0) 
 }
 
 /// DISK
 
 class Disk {
-    Identifier : String = Utils.RndUUID(9999)
+    Identifier : String = Randomish.hashUUID(9999)
     ImageName : String
     Nvme : Boolean? = 
       if (Backend == "Apple") true 

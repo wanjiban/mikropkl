@@ -1,0 +1,7 @@
+module URL
+
+open class Download {
+  name: String
+  url: String
+  filename : String = name
+}
