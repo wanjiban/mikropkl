@@ -8,7 +8,7 @@
 # NOTE: No "partial" build - so a build will overwrite disks!
 #   Thus, while VMs will run from the /Machines directory, any changes will be lost on next `make`. 
 
-.PHONY: prereq deps all build pkl clean 
+.PHONY: all prereq phase1 phase2 pkl clean 
 .SUFFIXES: 
 
 # basic build "from" and "to" here...
@@ -23,7 +23,7 @@ CHR_VERSION ?= stable
 # PKL_OPTIONS := -e chrVersion=$(CHR_VERSION)
 
 
-all: prereq deps 
+all: prereq phase1 
 	$(info all done)
 
 prereq:
@@ -37,16 +37,10 @@ clean:
 	rm -rf ./$(PKL_OUTPUT_DIR)
 
 # pkl creates the initial files /Manifasts to kickstart a UTM ZIP
-deps: pkl
-	$(info debug URLFILES $(URLFILES))
-	$(info debug URLTARGETS $(URLTARGETS))
-	$(info debug SIZEFILE $(SIZEFILE))
-	$(info debug SIZETARGETS $(SIZETARGETS))
-	$(info debug ZIPIMGFILES $(ZIPIMGFILES))
-	$(info debug ZIPIMGTARGETS $(ZIPIMGTARGETS))
+phase1: pkl
+	$(info ran build phase1)
 	$(info recursively call make build now placeholder files are created)
-	$(MAKE) build
-
+	$(MAKE) phase2
 pkl:
 	$(info running pkl)
 	pkl eval ./$(PKL_RUN_DIR)/*.pkl $(PKL_OPTIONS) -m ./$(PKL_OUTPUT_DIR)
@@ -85,8 +79,8 @@ LOCALCPFILE := $(wildcard ./$(PKL_OUTPUT_DIR)/*/Data/*.localcp)
 LOCALCPTARGETS := $(subst .localcp,,$(LOCALCPFILE))
 
 # links all targets together from found placeholders
-build: $(LOCALCPTARGETS) $(SIZETARGETS) $(URLTARGETS) $(ZIPIMGTARGETS)
-	$(info ran build)
+phase2: $(LOCALCPTARGETS) $(SIZETARGETS) $(URLTARGETS) $(ZIPIMGTARGETS)
+	$(info ran build phase2)
 	$(info used deps: $?)
 
 # download OS drive images
@@ -101,8 +95,17 @@ $(SIZETARGETS): $(SIZEFILE)
 # converts a .localcp file into a file copy from /Files
 $(LOCALCPTARGETS): $(LOCALCPFILE)
 
-# macOS only
+# unused currently, for debugging Makefile
+.PHONY: debug-patterns
+debug-patterns:
+	$(info debug URLFILES $(URLFILES))
+	$(info debug URLTARGETS $(URLTARGETS))
+	$(info debug SIZEFILE $(SIZEFILE))
+	$(info debug SIZETARGETS $(SIZETARGETS))
+	$(info debug ZIPIMGFILES $(ZIPIMGFILES))
+	$(info debug ZIPIMGTARGETS $(ZIPIMGTARGETS))
 
+# macOS-only helpers for UTM
 .PHONY: utm-version utm-install utm-uninstall utm-stop utm-start 
 
 tellvm = osascript -e 'tell application "UTM" to $(2) virtual machine named "$(1)"'

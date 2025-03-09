@@ -18,22 +18,39 @@ class Config {
   Display = new Listing {}
   Drive = new Listing<Disk> {}
   Information : Information
-  Input : QemuInput? = if (Backend == "QEMU") new QemuInput {} else null
+  Input : QemuInput? = 
+    if (Backend == "QEMU") new QemuInput {} 
+    else null
   Network : Listing<Network>
-  QEMU : QemuConfiguration? = if (Backend == "QEMU") new QemuConfiguration {
-    when (System.Architecture == "x86_64") { 
-      UEFIBoot = false
-      Hypervisor = true
-      RNGDevice = true
+  QEMU : QemuConfiguration? = 
+    if (Backend == "QEMU") 
+      new QemuConfiguration {
+        when (System.Architecture == "x86_64") { 
+          UEFIBoot = false
+          Hypervisor = true
+          RNGDevice = true
+        }
+      }
+    else null
+  Serial = 
+    new Listing<Serial> {
+      new SerialTerminal { 
+        when (Backend == "QEMU") { 
+          Target = "Auto" 
+        } 
+      }
     }
-  } else null
-  Serial = new Listing<Serial> {
-    new SerialTerminal { when (Backend == "QEMU") { Target = "Auto" } }
-  }
-  Sharing : QemuSharing? = if (Backend == "QEMU") new QemuSharing {} else null
-  Sound : List? = if (Backend == "QEMU") List() else null
-  System : System = if (Backend == "Apple") new AppleSystem {} else new QemuSystem {}
-  Virtualization : AppleConfiguration? = if (Backend == "Apple") new AppleConfiguration {} else null
+  Sharing : QemuSharing? = 
+    if (Backend == "QEMU") new QemuSharing {} 
+    else null
+  Sound : List? = 
+    if (Backend == "QEMU") List() else null
+  System : System = 
+    if (Backend == "Apple") new AppleSystem {} 
+    else new QemuSystem {}
+  Virtualization : AppleConfiguration? = 
+    if (Backend == "Apple") new AppleConfiguration {} 
+    else null
 }
 
 
@@ -49,28 +66,48 @@ class Information {
 
 /// DISK
 
-open class Disk {
+class Disk {
     Identifier : String = Utils.RndUUID(9999)
     ImageName : String
-    Nvme : Boolean? = if (Backend == "Apple") true else null
-    ImageType : String? = if (Backend == "QEMU") "Disk" else null
-    Interface : String? = if (Backend == "QEMU") if (Architecture == "x86_64") "VirtIO" else "NVMe" else null // or "NVMe", always null on Apple
-    InterfaceVersion : Int? = if (Backend == "QEMU") 1 else null
+    Nvme : Boolean? = 
+      if (Backend == "Apple") true 
+      else null
+    ImageType : String? = 
+      if (Backend == "QEMU") "Disk" 
+      else null
+    Interface : String? = 
+      if (Backend == "QEMU") 
+        if (Architecture == "x86_64")
+          "VirtIO" 
+        else
+          "NVMe"
+      else 
+        null // always null on Apple
+    InterfaceVersion : Int? = 
+      if (Backend == "QEMU") 1
+      else null
     ReadOnly : Boolean = false
-    hidden Backend : BackendType?
 
+    hidden Backend : BackendType?
     hidden Architecture : SystemArchitecture?
 }
 
 /// NETWORK
 
-open class Network {
-  Hardware : String? = if (Backend == "QEMU") "virtio-net-pci" else null
-  IsolateFromHost : Boolean? = if (Backend == "QEMU") false else null
+class Network {
+  Hardware : String? = 
+    if (Backend == "QEMU") "virtio-net-pci"
+    else null
+  IsolateFromHost : Boolean? = 
+    if (Backend == "QEMU") false 
+    else null
   MacAddress : String
   Mode : NetworkMode = "Shared"
   BridgeInterface: String(length > 0)?
-  PortForward : List? = if (Backend == "QEMU") List() else null
+  PortForward : List? = 
+    if (Backend == "QEMU") List() 
+    else null
+
   hidden Backend : BackendType
 }
 
@@ -103,7 +140,9 @@ class QemuSystem extends System {
   ForceMulticore = false // QEMU
   JITCacheSize = 0
   MemorySize : Int = defaultMemSize
-  Target = if (this.Architecture == "aarch64") "virt" else "q35"
+  Target = 
+    if (this.Architecture == "aarch64") "virt" 
+    else "q35"
 }
 
 /// SERIAL PORT

@@ -2,40 +2,45 @@ open module chr.utmzip
 extends "../Pkl/utmzip.pkl"
 import "../Pkl/CHR.pkl"
 
-baseName = "chr.\(architecture).\(backend.toLowerCase()).\(chrVersion.version)"
 name = baseName
+baseName = "chr.\(architecture).\(backend.toLowerCase()).\(chrVersion.version)"
 
 cpus = 2
 memory = 1.gib
 
 imageDownloadUrl = chrVersion.downloadUrl
+
 additionalDisks : List<DataSize> = List()
 
-notes = """
-\(name) 
-Mikrotik RouterOS CHR for UTM's \(backend) Virtualization on \(architecture).  
+notes = 
+  """
+  \(name) 
+  Mikrotik RouterOS CHR for UTM's \(backend) Virtualization on \(architecture).  
 
-Default username is 'admin', without password - please change when prompted.  
+  Default username is 'admin', without password - please change when prompted.  
 
-Speed is limited to 1Mb/s, but free forever.  
-With trial or paid license, the speed limit can be changed.  
-See https://help.mikrotik.com/docs for more information.
-"""
+  Speed is limited to 1Mb/s, but free forever.  
+  With trial or paid license, the speed limit can be changed.  
+  See https://help.mikrotik.com/docs for more information.
+  """
 
 logoSvg = new CHR.Icon {
-    style = "solid"
-}
-
-chrVersion : CHR.RouterOSVersion = new CHR.RouterOSVersion { 
-    name = read?("env:CHR_VERSION") ?? "stable"  
-    arch = outer.architecture.replaceAll("x86_64","x86").replaceAll("aarch64","arm64")
+  style = "solid"
 }
 
 // override the actual .plist, to set CPU to "cortex-a710" for CHR
 configPlist {
-    System {
-        when (outer.architecture == "aarch64") {
-            CPU = "cortex-a710"
-        }
+  System {
+    when (outer.architecture == "aarch64") {
+      CPU = "cortex-a710"
     }
+  }
+}
+
+// utmzip extension to set RouterOS version to use
+chrVersion : CHR.RouterOSVersion = new CHR.RouterOSVersion { 
+  name = read?("env:CHR_VERSION") ?? "stable"  
+  arch = outer.architecture
+    .replaceAll("x86_64","x86")
+    .replaceAll("aarch64","arm64")
 }

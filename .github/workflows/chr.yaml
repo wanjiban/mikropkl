@@ -30,6 +30,7 @@ on:
         type: string
         description: 'Prefix to use in release name'
         required: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -52,7 +53,7 @@ jobs:
       - name: Set RouterOS version, based on dispatch_workflow version
         id: get-routeros-version
         run: |
-          echo "version=`CHR_VERSION=${{ github.event.inputs.version }} pkl eval ./Pkl/chr.version.pkl`" >> $GITHUB_OUTPUT
+          echo "version=`CHR_VERSION=${{ github.event.inputs.version }} pkl eval ./Pkl/chr-version.pkl`" >> $GITHUB_OUTPUT
       - name: Build using Makefile
         id: make
         run: |

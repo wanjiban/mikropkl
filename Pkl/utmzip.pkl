@@ -10,32 +10,36 @@ memory : DataSize = UTM.defaultMemSize
 cpus : UTM.CPUCount = UTM.defaultCPUCount
 
 notes : String = UTM.defaultNotes
-logoSvg : Utils.SVG = new Utils.SVG {} 
+logoSvg : Utils.SVG = new {} 
 
 imageDownloadUrl : Utils.URLDownload
 
 additionalDisks : List<DataSize>
 
 configPlist : UTM.Config = new {
+
   Backend = backend
+  
   System {
     Architecture = architecture
     MemorySize = memory.toUnit("mib").value
     CPUCount = cpus
   }
+  
   Information {
     Name = name
     Notes = notes
     Icon = logoSvg.name
   }
+  
   Drive {
-    new UTM.Disk {
+    new {
       Backend = backend
       Architecture = architecture
       ImageName = imageDownloadUrl.filename
     }
     for (_index in additionalDisks.mapIndexed((i,e)->Pair(i,e))) {
-      new UTM.Disk {
+      new {
         Identifier = Utils.RndUUID(_index.first)
         Backend = backend
         Architecture = architecture
@@ -43,13 +47,16 @@ configPlist : UTM.Config = new {
       }
     }
   }
+  
   Network {
-    new UTM.Network {
+    new {
       MacAddress = Utils.RndMacAddress(name, 0, if (backend == "Apple") "a" else "e")
       Backend = backend
-      //Hardware = if (backend == "QEMU" && architecture == "x86_64") "e1000" else null
+      /// example to control QEMU network card: 
+      // Hardware = if (backend == "QEMU" && architecture == "x86_64") "e1000" else null
     } 
   }
+  
   Serial {
     new UTM.PttyTerminal {
       when (backend == "QEMU") { Target = "Auto" }
@@ -57,31 +64,48 @@ configPlist : UTM.Config = new {
   }
 }
 
-meta : Any?
+// NOTE: `output` below uses "multiple file output" so a `-m <outdir>` is needed in "pkl eval"
 
 output {
+
   files {
+
+    // required: config.plist
     ["\(name).utm/config.plist"] {
         value = configPlist
         renderer = new PListRenderer {}
     }
+    
+    // store Pkl PCF format in package 
     ["\(name).utm/config.pkl"] {
         value = configPlist
         renderer = new PcfRenderer {}
     }
+    
+    // logo
     ["\(name).utm/Data/\(logoSvg.name)"] {
         text = logoSvg.text
     }
+    
+    // required: a ".url" file with VM disk image download URL
     ["\(name).utm/Data/\(imageDownloadUrl.name).url"] {
         text = imageDownloadUrl.url
     }
+    
     when (additionalDisks.length > 0) {
       for ( _pair in additionalDisks.mapIndexed((i,e) -> Pair(i,e))) {
-        ["\(name).utm/Data/qdisk\(_pair.first).size"] { text = _pair.second.toUnit("mb").value.toString() }
+        ["\(name).utm/Data/qdisk\(_pair.first).size"] { 
+          text = _pair.second.toUnit("mb").value.toString() 
+        }
       }
     }
+    
     when (backend == "Apple") {
-      ["\(name).utm/Data/efi_vars.fd.localcp"] { text = "efi_vars.fd" }
+      ["\(name).utm/Data/efi_vars.fd.localcp"] { 
+        text = "efi_vars.fd" 
+      }
     }
-  } 
-}
+
+  } // files
+
+} // output

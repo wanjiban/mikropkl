@@ -4,6 +4,7 @@ import "../Pkl/CHR.pkl"
 backend = "QEMU"
 
 name = "rose.\(baseName)"
+
 notes = "\(super.notes)  This 'ROSE' image has extra disks of size: \(additionalDisks)"
 
 logoSvg = new CHR.Icon { 
