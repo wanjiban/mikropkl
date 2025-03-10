@@ -13,10 +13,9 @@ The created bundle contains a virtualized OS that can be installed into UTM in a
   * `git clone` (or fork) this project and build locally - then copy or run as desired from the `Machines` directory. 
 
 > [!NOTE] 
-> #### RouterOS Downloads
 >
 > **Ready-to-use CHR packages are in GitHub's [Releases](https://github.com/tikoci/mikropkl/releases)**.  
-> Installation instructions - including `utm://downloadVM?...` links are included in each GitHub Release.
+> Installation instructions - including `utm://downloadVM?...` URLs are included in each GitHub Release.
 
 UTM supports two modes of virtualization:
   * [_QEMU_](https://docs.getutm.app/settings-qemu/settings-qemu/) (`QEMU`)
@@ -112,7 +111,7 @@ The `rose.*` images are regular CHR images but with disks added by `pkl`/`Makefi
 > Mikrotik RouterOS is based on the Linux kernel.  However, "userland" is neither GNU nor BSD, but rather a proprietary system with a rich ["scripting" interface](https://help.mikrotik.com/docs/spaces/ROS/pages/47579229/Scripting). 
 _i.e._ **All router configuration is always scripting** _(outside GUI/web tools, like [winbox](https://mikrotik.com/download))_.  As such, there is no `/bin/sh`, so the CLI is just a REPL for the scripting language.
 >
-> Also, unlike a traditional shell, RouterOS has a full ["type system"](https://help.mikrotik.com/docs/spaces/ROS/pages/47579229/Scripting#Scripting-Datatypes), including mixed-typed, multi-dimensional array, that can contain functions.  As a _router_ config language, there are first-class types like an IP address or another type, `ip-prefix, which carries a CIDR prefix.  But there is no "float" type.  _A floating point number is not common in networking, so RouterOS does not have one.  But the side-effect is `1.1` in CLI is a `ip` type, as in early RFCs is valid shorter for `1.1.1.1` - but just one oddity that happens in type-aware shell with aggressive casting_.  Also, RouterOS does not have anything like `pkl`'s nifty [`DataSize`](https://pkl-lang.org/package-docs/pkl/0.26.0/base/DataSize.html) type, which does come up in networking.
+> Also, unlike a traditional shell, RouterOS has a full ["type system"](https://help.mikrotik.com/docs/spaces/ROS/pages/47579229/Scripting#Scripting-Datatypes), including mixed-typed, multi-dimensional array, that can contain functions.  As a _router_ config language, there are first-class types like an IP address or another type, `ip-prefix`, which carries a CIDR prefix.  But there is no "float" type.  _A floating point number is not common in networking, so RouterOS does not have one.  But the side-effect is `1.1` in CLI is a `ip` type, as in early RFCs is valid shorter for `1.1.1.1` - but just one oddity that happens in type-aware shell with aggressive casting_.  Also, RouterOS does not have anything like `pkl`'s nifty [`DataSize`](https://pkl-lang.org/package-docs/pkl/0.26.0/base/DataSize.html) type, which does come up in networking.
 >
 > While left unexplored here, RouterOS does lend itself to using `pkl` to generate configuration as a result of these properties.  For example, a new `pkl` Renderer could be written to output a RouterOS script.  Or, a new [external resource reader](https://pkl-lang.org/main/current/language-reference/index.html#extending-resource-readers) could be used to "fetch" data from RouterOS to use in a `pkl` script. 
 
@@ -155,7 +154,7 @@ make utm-uninstall
 * UTM also support sending serial to a [/dev/stty port](https://docs.getutm.app/advanced/serial/).  This means you can use CLI tools like `screen` or `cu` to access the terminal - instead of a UI window.  Classic UNIX tools like `expect` can also be used, which allows TCL-based automation of terminals via serial too.
   > RouterOS CHR will only use the first serial port as a login console.  By default, that is a UI Window with ANSI support.  Other added serial ports are left unassigned.  To use additional serial ports for console access (_i.e._ login and CLI commands), use `/system/console/add`.  The previous test project [tikoci/chr-utm](https://github.com/tikoci/chr-utm/blob/main/README.md) has more information on UTM Serial usage with RouterOS, including an example `expect` script for setup.
 
-Each virtual machine may have its own automation APIs.  Please refer to a guest machine's own documentation for details on their APIs.  For example,  RouterOS supports many API like [REST API](https://help.mikrotik.com/docs/spaces/ROS/pages/47579162/REST+API), native TCP [API](https://help.mikrotik.com/docs/spaces/ROS/pages/47579160/API), `ssh`, and serial, among others to cover here.  So guest virtual machine APIs are left to other sources.
+Each virtual machine may have its own automation APIs.  Please refer to a guest machine's own documentation for details on their APIs.  For example,  RouterOS supports many API like [REST API](https://help.mikrotik.com/docs/spaces/ROS/pages/47579162/REST+API), native TCP [API](https://help.mikrotik.com/docs/spaces/ROS/pages/47579160/API), `ssh`, and serial, among others - too many to cover here.  So guest virtual machine APIs are left to other sources.
 
 
 
@@ -171,6 +170,7 @@ If the goal is to just "tweak" an existing configuration, you should be able to 
 
 But adapting to new machine types requires a better understanding of `pkl`.  See https://pkl-lang.org for examples and documentation `pkl` syntax and libraries.
 
+> [!TIP]
 > #### Difference between _imported_ and _aliased_ machines in UTM
 > The difference is the `utm://` will "import" the machine, and use its default store (i.e. `~/Library/Containers/UTM/Data`) along with other machines created from UTM's UI.  While downloading the `.utm` package "manually", the user controls where the machine lives on the file system. 
 > 

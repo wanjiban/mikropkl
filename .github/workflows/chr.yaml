@@ -152,41 +152,19 @@ jobs:
 
             ### Usage
 
+            ### Installation Options
+
             #### Using `utm://`  in Terminal's `open`
             On macOS, with [UTM](https://mac.getutm.app), install
             1. Launch "Terminal" 
             2. Type `open '<utm_app_url>'`, replacing _utm_app_url_ with a `utm://...` link above - _make sure to 'single quote URL'_
             3. UTM will open and prompt you if you want to download the machine
-            4. If accepted, the machine will be stored in UTM's default document directory.
+            4. If accepted, the machine will be stored in UTM's default document directory
             5. Use UTM to start the image, and a new window with a terminal to machine will appear
 
             #### Just download the ZIP to control location of machine
             The download links contain a UTM package inside a ZIP file.  When expanded,
             assuming [UTM](https://mac.getutm.app) is installed, the folder ending in `.utm`
-            should just launch like any other document.  
-
-            
-            ### Notes
-
-            #### UTM "import" vs "alias"
-            The difference is the `utm://` will "import" the machine,
-            and use it's default store (i.e. `~/Library/Containers/UTM/Data`) along with other
-            machines created from UTM's UI.  While downloading the `.utm` package "manually", 
-            the user controls where the machine lives on the file system.  
-            
-            When downloaded package is launched from Finder, UTM will create an "alias" in the UI when opened.
-            This is indicated by a (subtle) small arrow in lower right corner on the machine's icon in UTM.
-            A machine __alias__ can be removed in UTM using "Remove" on the machine, and only the _reference_ in
-            UI is removed for an "alias" - __not__ the machine nor disks.  But if `utm://` is used a "Remove",
-            will delete machine and disks - since it "imported" into UTM and thus managed by UTM.
+            will launch in UTM, like any other macOS "document".  
 
 
-            #### "ROSE" RouterOS images
-            The ROSE images here are regular CHR images, just with 3 spare 100Mb disks for testing
-            storage related features, without having to manually add disks.  
-            After installing and starting machine, to enable ROSE storage add the "rose-storage" package,
-            ```
-            /system/package/update/check-for-update
-            /system/package/enable rose-storage
-            /system/reboot
-            ```
