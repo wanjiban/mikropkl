@@ -1,0 +1,169 @@
+
+name: CHR MikroTikPatch Packages
+permissions: write-all
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        default: "stable"
+        type: string
+        description: 'RouterOS Version or Channel'
+        required: true
+      pklversion:
+        default: "0.28.1"
+        type: string
+        description: 'pkl Version'
+        required: true
+      makefileflags:
+        default: "-d"
+        type: string
+        description: 'Makefile options'
+        required: true
+      tagprefix:
+        default: "chr-"
+        type: string
+        description: 'Prefix to use in git tag'
+        required: true
+      releaseprefix:
+        default: "CHR"
+        type: string
+        description: 'Prefix to use in release name'
+        required: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      machines: ${{ steps.outputdirs.outputs.built }}
+      chr-version: ${{ steps.get-routeros-version.outputs.version }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Install packages into building machine
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y unzip qemu-utils rsync gdisk dosfstools parted genisoimage zip make
+      - name: Intall Apple pkl-lang
+        run: |
+          curl -L -o pkl 'https://github.com/apple/pkl/releases/download/${{ github.event.inputs.pklversion }}/pkl-linux-amd64'
+          chmod +x pkl
+          ./pkl --version
+          cp ./pkl /usr/local/bin
+      - name: Set RouterOS version, based on dispatch_workflow version
+        id: get-routeros-version
+        run: |
+          echo "version=`CHR_VERSION=${{ github.event.inputs.version }} pkl eval ./Pkl/chr-version.pkl`" >> $GITHUB_OUTPUT
+      - name: Build using Makefile
+        id: make
+        run: |
+          make ${{ github.event.inputs.makefileflags }} CHR_VERSION=${{ steps.get-routeros-version.outputs.version }}  
+      - name: Store /Machines directory .utm machines built, for the "dynamic matrix of artifacts"
+        id: outputdirs
+        run: |
+          echo built=$(ls Machines | jq -R -s -c 'split("\n")[:-1]') >> $GITHUB_OUTPUT
+      - name: Produce Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Machines
+          path: ./Machines
+      - name: Push git tag to save builder's code (required for release)
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "github-actions@users.noreply.github.com"
+          git tag ${{ github.event.inputs.tagprefix }}${{ steps.get-routeros-version.outputs.version }} 
+          git push origin ${{ github.event.inputs.tagprefix }}${{ steps.get-routeros-version.outputs.version }}
+  release:
+    runs-on: ubuntu-latest
+    needs: build
+    outputs:
+      upload_url: ${{ steps.create.outputs.upload_url }}
+      id: ${{ steps.create.outputs.id }}
+    steps:
+      - name: Create GitHub release
+        id: create
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.event.inputs.tagprefix }}${{ needs.build.outputs.chr-version }} 
+          release_name: ${{ github.event.inputs.releaseprefix }} ${{ needs.build.outputs.chr-version }} 
+          body: |
+            UTM virtual machines with RouterOS CHR ${{ needs.build.outputs.chr-version }} 
+            built using `pkl` ${{ github.event.inputs.pklversion }}
+
+            ### Machines 
+          draft: false
+          prerelease: true
+  fossilize:
+    runs-on: ubuntu-latest
+    needs: 
+      - release
+      - build
+    strategy:
+      matrix:
+        machine: ${{ fromJSON(needs.build.outputs.machines) }}
+      fail-fast: true
+      max-parallel: 1
+    steps:
+      - name: Get all machines
+        uses: actions/download-artifact@v4
+        with:
+          name: Machines
+      - name: Create ZIP for ${{ matrix.machine}}
+        id: rename
+        run: |
+          zip -r ${{ matrix.machine}}.zip ${{ matrix.machine}} 
+      - name: Upload Pkl'd image ${{ matrix.machine }} as release asset
+        id: upload-release-asset-raw
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.release.outputs.upload_url }}
+          asset_path: ./${{ matrix.machine }}.zip
+          asset_name: ${{ matrix.machine }}.zip
+          asset_content_type: application/octet-stream
+      - name: Edit Release
+        uses: irongut/EditRelease@v1.2.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          id:  ${{ needs.release.outputs.id }}
+          body: |
+
+            #### ${{ matrix.machine }}
+            https://github.com/${{ github.repository }}/releases/download/${{ github.event.inputs.tagprefix }}${{ needs.build.outputs.chr-version }}/${{ matrix.machine }}.zip
+            ```
+            utm://downloadVM?url=https://github.com/${{ github.repository }}/releases/download/${{ github.event.inputs.tagprefix }}${{ needs.build.outputs.chr-version }}/${{ matrix.machine }}.zip
+            ```
+  finish:
+    runs-on: ubuntu-latest
+    needs: 
+      - release
+      - build
+      - fossilize
+    steps:
+      - name: Edit Release
+        uses: irongut/EditRelease@v1.2.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          id:  ${{ needs.release.outputs.id }}
+          body: |
+
+            ### Usage
+
+            ### Installation Options
+
+            #### Using `utm://`  in Terminal's `open`
+            On macOS, with [UTM](https://mac.getutm.app), install
+            1. Launch "Terminal" 
+            2. Type `open '<utm_app_url>'`, replacing _utm_app_url_ with a `utm://...` link above - _make sure to 'single quote URL'_
+            3. UTM will open and prompt you if you want to download the machine
+            4. If accepted, the machine will be stored in UTM's default document directory
+            5. Use UTM to start the image, and a new window with a terminal to machine will appear
+
+            #### Just download the ZIP to control location of machine
+            The download links contain a UTM package inside a ZIP file.  When expanded,
+            assuming [UTM](https://mac.getutm.app) is installed, the folder ending in `.utm`
+            will launch in UTM, like any other macOS "document".  
+
